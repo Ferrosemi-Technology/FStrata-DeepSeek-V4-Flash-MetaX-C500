@@ -1,11 +1,11 @@
 # 基于沐曦国产生态的 DeepSeek-V4-Flash 双 C500 部署与性能测试
 
-## MemoEngine × MetaX C500
+## FStrata × MetaX C500
 
 晶铁正式公开基于 **沐曦 C500 GPU 与 MXMACA 国产软件生态**的
 **DeepSeek-V4-Flash 双 C500 本地部署方案与性能测试结果**。
 
-本次部署基于 **MemoEngine（晶铁存算推理引擎）** 与 SGLang，
+本次部署基于 **晶铁存算推理引擎（FStrata）** 与 SGLang，
 围绕大型 MoE 模型在国产 GPU 环境下的实际运行需求，
 完成模型权重组织、CPU-GPU 异构专家计算、双卡协同执行、
 推测解码、图执行以及长上下文资源管理等关键链路适配。
@@ -64,7 +64,7 @@
 
 本次部署基于 **沐曦 C500 GPU 与 MXMACA 国产软件生态**完成。
 
-MemoEngine 负责模型权重组织、CPU-GPU 异构专家执行、
+FStrata 负责模型权重组织、CPU-GPU 异构专家执行、
 任务调度、数据传输、计算同步与结果合并，
 SGLang 提供模型服务与 Benchmark Serving 测试链路。
 
@@ -252,13 +252,13 @@ TPOT 整体保持在相对稳定区间，
 
 ---
 
-## 6. MemoEngine 异构 MoE 推理架构
+## 6. FStrata 异构 MoE 推理架构
 
 DeepSeek-V4-Flash 采用 MoE 架构，
 专家权重规模较大。
 
 在双 C500 环境下，
-MemoEngine 通过 CPU 与 GPU 的异构协同，
+FStrata 通过 CPU 与 GPU 的异构协同，
 对专家权重存储、专家计算以及运行时调度进行统一组织。
 
 整体执行链路包括：
@@ -270,7 +270,7 @@ DeepSeek-V4-Flash
       SGLang
         │
         ▼
-     MemoEngine
+     FStrata
         │
         ├── 模型权重组织
         ├── MoE 专家调度
@@ -292,7 +292,7 @@ DeepSeek-V4-Flash
 ### 6.1 基于沐曦国产生态的适配
 
 围绕 DeepSeek-V4-Flash 在沐曦国产 GPU 环境中的实际运行需求，
-MemoEngine 完成了多个关键链路的适配，包括：
+FStrata 完成了多个关键链路的适配，包括：
 
 - 模型权重加载与低精度计算路径；
 - MoE 专家计算；
@@ -311,7 +311,7 @@ MemoEngine 完成了多个关键链路的适配，包括：
 
 ### 6.2 CPU-GPU 异构专家协同
 
-MemoEngine 根据专家配置组织计算任务：
+FStrata 根据专家配置组织计算任务：
 
 - GPU 侧负责高频、高密度专家计算；
 - CPU 侧承载容量型及相应专家权重与计算任务；
@@ -350,7 +350,7 @@ CPU 专家执行采用双 NUMA 资源组织。
 ### 6.4 多卡协同
 
 在 TP2 环境下，
-MemoEngine 对专家归属、权重视图、执行队列以及通信边界进行统一组织。
+FStrata 对专家归属、权重视图、执行队列以及通信边界进行统一组织。
 
 双卡不是简单复制相同计算，
 而是使每个 rank 都承担明确的本地 CPU、GPU 与通信任务，
@@ -496,7 +496,7 @@ C1、C3、C5 …… C19 表示测试时施加的不同客户端并发压力。
 | 执行调度层 | CPU-GPU 异构协同、双卡执行、异步流水、图执行与推测解码 |
 | 服务层 | SGLang Serving、并发服务、长上下文资源管理与正确性验证 |
 
-MemoEngine 将模型权重存储、专家计算、设备执行、
+FStrata 将模型权重存储、专家计算、设备执行、
 运行时调度和长上下文资源管理纳入同一条推理链路，
 并基于沐曦 C500 国产算力环境完成实际部署与测试。
 
@@ -521,7 +521,7 @@ MemoEngine 将模型权重存储、专家计算、设备执行、
 - 正式负载下未观察到持续热降频。
 
 以上结果均来自当前
-**MemoEngine + SGLang + MetaX C500 × 2**
+**FStrata + SGLang + MetaX C500 × 2**
 部署环境的实测数据。
 
 ---
@@ -533,7 +533,7 @@ MemoEngine 将模型权重存储、专家计算、设备执行、
 
 为避免不同环境之间的直接横向误读，请注意：
 
-- 本文数据均来自当前 **MemoEngine + SGLang + MetaX C500 × 2** 测试环境；
+- 本文数据均来自当前 **FStrata + SGLang + MetaX C500 × 2** 测试环境；
 - 不同模型版本、软件栈版本、系统配置、并发策略与请求长度均可能影响最终结果；
 - 高并发 TTFT 包含排队等待时间，不等同于单请求空载首 Token 延迟；
 - 128K 容量验证与 17,700 + 17,700 tokens 等长性能测试属于不同测试口径；
@@ -542,9 +542,9 @@ MemoEngine 将模型权重存储、专家计算、设备执行、
 
 ---
 
-## About MemoEngine
+## About FStrata
 
-**MemoEngine（晶铁存算推理引擎）**
+**FStrata（晶铁存算推理引擎）**
 面向大型语言模型与 MoE 模型的本地推理场景，
 通过模型权重组织、CPU-GPU 异构计算、
 多卡协同执行以及长上下文资源管理，
